@@ -1,32 +1,23 @@
-#!/usr/bin/python3
-"""
-Defines a function that returns a list of lists
-of integers that represents the pascal's triangle.
-"""
-
-
 def pascal_triangle(n):
-    """create a list of lists of integers
-    parameters:
-        n [int]:
-            the number of rows
-    return:
-        [list of lists of ints]:
-            representing the pascal's triangle
-    """
-    if type(n) is not int:
-        raise TypeError("n must be an integer")
-    matrix = []
     if n <= 0:
-        return matrix
-    for i in range(n):
-        arr = []
-        for j in range(i+1):
-            if j == 0:
-                arr.append(1)
-            elif j == i:
-                arr.append(1)
-            else:
-                arr.append(matrix[i-1][j-1] + matrix[i-1][j])
-        matrix.append(arr)
-    return matrix
+        return []
+
+    triangle = [[1]]
+
+    for i in range(1, n):
+        prev_row = triangle[-1]
+        new_row = [1]
+
+        for j in range(1, i):
+            new_row.append(prev_row[j - 1] + prev_row[j])
+
+        new_row.append(1)
+        triangle.append(new_row)
+
+    return triangle
+
+# Testing the function
+if __name__ == "__main__":
+    triangle = pascal_triangle(5)
+    for row in triangle:
+        print(row)
