@@ -1,27 +1,33 @@
 #!/usr/bin/python3
-"""Pascal Triangle Interview Challenge"""
+"""
+Pascal Triangle exercise file
+"""
+
+
+def fact(n):
+    """
+    A function to recursively perform the factorial
+    operation on a number
+    :param n:
+    :return: The factorial, denoted by n! mathematically
+    """
+    if n == 0 or n == 1:
+        return 1
+    return n * fact(n-1)
 
 
 def pascal_triangle(n):
-    """returns a list of lists of numbers
-    representing the pascal triangle"""
-    if n <= 0:
-        return []
+    """
+    Using the fact function above, we compute
+    a combination using the given parameter n
+    to produce the famous pascals triangle
+    """
+    result = []
+    if n > 0:
+        for i in range(n):
+            new_list = []
+            for j in range(i+1):
+                new_list.append(int((fact(i)/(fact(i-j)*fact(j)))))
+            result.append(new_list)
 
-    pascal_triangle = [0] * n
-
-    for i in range(n):
-        # define a row and fill first and last idx with 1
-        new_row = [0] * (i+1)
-        new_row[0] = 1
-        new_row[len(new_row) - 1] = 1
-
-        for j in range(1, i):
-            if j > 0 and j < len(new_row):
-                a = pascal_triangle[i - 1][j]
-                b = pascal_triangle[i - 1][j - 1]
-                new_row[j] = a + b
-
-        pascal_triangle[i] = new_row
-
-    return pascal_triangle
+    return result
