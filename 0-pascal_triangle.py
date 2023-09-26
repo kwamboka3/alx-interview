@@ -1,33 +1,32 @@
 #!/usr/bin/python3
 """
-Pascal Triangle exercise file
+Defines a function that returns a list of lists
+of integers that represents the pascal's triangle.
 """
 
 
-def fact(n):
-    """
-    A function to recursively perform the factorial
-    operation on a number
-    :param n:
-    :return: The factorial, denoted by n! mathematically
-    """
-    if n == 0 or n == 1:
-        return 1
-    return n * fact(n-1)
-
-
 def pascal_triangle(n):
+    """create a list of lists of integers
+    parameters:
+        n [int]:
+            the number of rows
+    return:
+        [list of lists of ints]:
+            representing the pascal's triangle
     """
-    Using the fact function above, we compute
-    a combination using the given parameter n
-    to produce the famous pascals triangle
-    """
-    result = []
-    if n > 0:
-        for i in range(n):
-            new_list = []
-            for j in range(i+1):
-                new_list.append(int((fact(i)/(fact(i-j)*fact(j)))))
-            result.append(new_list)
-
-    return result
+    if type(n) is not int:
+        raise TypeError("n must be an integer")
+    matrix = []
+    if n <= 0:
+        return matrix
+    for i in range(n):
+        arr = []
+        for j in range(i+1):
+            if j == 0:
+                arr.append(1)
+            elif j == i:
+                arr.append(1)
+            else:
+                arr.append(matrix[i-1][j-1] + matrix[i-1][j])
+        matrix.append(arr)
+    return matrix
