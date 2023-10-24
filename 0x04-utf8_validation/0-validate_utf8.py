@@ -1,23 +1,61 @@
 #!/usr/bin/python3
-def validUTF8(data):
-    byte_count = 0
+"""UTF-8 validation module.
+"""
 
-    for byte in data:
-        byte_bin = format(byte, '08b')
-        if byte_count == 0:
-            if byte_bin[0] == '0':
-                continue
-            elif byte_bin.startswith('110'):
-                byte_count = 1
-            elif byte_bin.startswith('1110'):
-                byte_count = 2
-            elif byte_bin.startswith('11110'):
-                byte_count = 3
+
+def validUTF8(data):
+    """Checks if a list of integers are valid UTF-8 codepoints.
+    See <https://datatracker.ietf.org/doc/html/rfc3629#page-4>
+    """
+    skip = 0
+    n = len(data)
+    for i in range(n):
+        if skip > 0:
+            skip -= 1
+            continue
+        if type(data[i]) != int or data[i] < 0 or data[i] > 0x10ffff:
+            return False
+        elif data[i] <= 0x7f:
+            skip = 0
+        elif data[i] & 0b11111000 == 0b11110000:
+            # 4-byte utf-8 character encoding
+            span = 4
+            if n - i >= span:
+                next_body = list(map(
+                    lambda x: x & 0b11000000 == 0b10000000,
+                    data[i + 1: i + span],
+                ))
+                if not all(next_body):
+                    return False
+                skip = span - 1
+            else:
+                return False
+        elif data[i] & 0b11110000 == 0b11100000:
+            # 3-byte utf-8 character encoding
+            span = 3
+            if n - i >= span:
+                next_body = list(map(
+                    lambda x: x & 0b11000000 == 0b10000000,
+                    data[i + 1: i + span],
+                ))
+                if not all(next_body):
+                    return False
+                skip = span - 1
+            else:
+                return False
+        elif data[i] & 0b11100000 == 0b11000000:
+            # 2-byte utf-8 character encoding
+            span = 2
+            if n - i >= span:
+                next_body = list(map(
+                    lambda x: x & 0b11000000 == 0b10000000,
+                    data[i + 1: i + span],
+                ))
+                if not all(next_body):
+                    return False
+                skip = span - 1
             else:
                 return False
         else:
-            if not byte_bin.startswith('10'):
-                return False
-            byte_count -= 1
-
-    return byte_count == 0
+            return False
+    return True
